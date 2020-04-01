@@ -20,6 +20,8 @@ def parse_args():
     parser = argparse.ArgumentParser(__doc__);
     parser.add_argument("--cleanup", action="store_true",
             help="Clean up the build folder after done.");
+    parser.add_argument("--flags", type=str, default="",
+            help="Pass custom build-flags to cmake.");
     parser.add_argument("package",
             choices=["all"] + get_third_party_dependencies());
     return parser.parse_args();
@@ -53,26 +55,26 @@ def build_generic(libname, build_flags="", cleanup=True):
     if cleanup:
         shutil.rmtree(build_dir)
 
-def build(package, cleanup):
+def build(package, build_flags="", cleanup=True):
     if package == "all":
         for libname in get_third_party_dependencies():
-            build(libname, cleanup);
+            build(libname, build_flags, cleanup);
     elif package == "cgal":
         build_generic("cgal",
-                " -DWITH_CGAL_ImageIO=Off -DWITH_CGAL_Qt5=Off",
+                " -DWITH_CGAL_ImageIO=Off -DWITH_CGAL_Qt5=Off " + build_flags,
                 cleanup=cleanup);
     elif package == "clipper":
-        build_generic("Clipper/cpp", cleanup=cleanup);
+        build_generic("Clipper/cpp", build_flags=build_flags, cleanup=cleanup);
     elif package == "tbb":
         build_generic("tbb",
-                " -DTBB_BUILD_SHARED=On -DTBB_BUILD_STATIC=Off",
+                " -DTBB_BUILD_SHARED=On -DTBB_BUILD_STATIC=Off " + build_flags,
                 cleanup=cleanup);
     else:
-        build_generic(package, cleanup=cleanup);
+        build_generic(package, build_flags=build_flags, cleanup=cleanup);
 
 def main():
     args = parse_args();
-    build(args.package, args.cleanup);
+    build(args.package, args.flags, args.cleanup);
 
 if __name__ == "__main__":
     main();
