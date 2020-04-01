@@ -10,7 +10,10 @@
 using namespace PyMesh;
 
 MshSaver::MshSaver(const std::string& filename, bool binary) :
-    m_binary(binary), m_num_nodes(0), m_num_elements(0), m_dim(0) {
+    m_binary(binary), m_num_nodes(0), m_num_elements(0), m_dim(0),
+    m_default_physical_tag(1), m_default_physical_name("Omega"),
+    m_save_default_physical_tag(false)
+{
         if (!m_binary) {
             fout.open(filename.c_str(), std::fstream::out);
         } else {
@@ -53,6 +56,13 @@ void MshSaver::save_header() {
         fout.write((char*)&one, sizeof(int));
         fout << "$EndMeshFormat" << std::endl;
     }
+    if (m_save_default_physical_tag) {
+        fout << "$PhysicalNames" << std::endl;
+        fout << "1" << std::endl;
+        fout << m_dim << " " << m_default_physical_tag << " "
+            << m_default_physical_name << std::endl;
+        fout << "$EndPhysicalNames" << std::endl;
+    }
     fout.flush();
 }
 
@@ -93,18 +103,23 @@ void MshSaver::save_nodes(const VectorF& nodes) {
 void MshSaver::save_elements(
         const VectorI& elements, MshSaver::ElementType type) {
     size_t nodes_per_element = 0;
+    size_t element_dim = 0;
     switch (type) {
         case TRI:
             nodes_per_element = 3;
+            element_dim = 2;
             break;
         case QUAD:
             nodes_per_element = 4;
+            element_dim = 2;
             break;
         case TET:
             nodes_per_element = 4;
+            element_dim = 3;
             break;
         case HEX:
             nodes_per_element = 8;
+            element_dim = 3;
             break;
         default:
             {
@@ -122,7 +137,9 @@ void MshSaver::save_elements(
     if (m_num_elements > 0) {
         int elem_type = type;
         int num_elems = m_num_elements;
-        int tags = 0;
+        bool has_physical_tag = m_save_default_physical_tag && element_dim == m_dim;
+        int tags = (has_physical_tag) ? 1 : 0;
+        int physical_tag = (has_physical_tag) ? 1 : 0;
         if (!m_binary) {
             for (size_t i=0; i<elements.size(); i+=nodes_per_element) {
                 int elem_num = i/nodes_per_element + 1;
@@ -130,6 +147,8 @@ void MshSaver::save_elements(
                     VectorI::Ones(nodes_per_element);
 
                 fout << elem_num << " " << elem_type << " " << tags << " ";
+                if (has_physical_tag)
+                    fout << physical_tag << " ";
                 for (size_t j=0; j<nodes_per_element; j++) {
                     fout << elem[j] << " ";
                 }
@@ -144,6 +163,8 @@ void MshSaver::save_elements(
                 VectorI elem = elements.segment(i, nodes_per_element) +
                     VectorI::Ones(nodes_per_element);
                 fout.write((char*)&elem_num, sizeof(int));
+                if (has_physical_tag)
+                    fout.write((char*)&physical_tag, sizeof(int));
                 fout.write((char*)elem.data(), sizeof(int)*nodes_per_element);
             }
         }

@@ -84,6 +84,7 @@ void MSHWriter::write_mesh(Mesh& mesh) {
 void MSHWriter::write(const VectorF& vertices, const VectorI& faces, const VectorI& voxels,
         size_t dim, size_t vertex_per_face, size_t vertex_per_voxel) {
     MshSaver saver(m_filename, !m_in_ascii);
+    saver.set_save_default_physical_tag( m_use_default_physical_tag );
     MshSaver::ElementType type;
     if (voxels.size() == 0) {
         type = get_face_type(vertex_per_face);
@@ -100,6 +101,7 @@ void MSHWriter::write(const VectorF& vertices, const VectorI& faces, const Vecto
 
 void MSHWriter::write_surface_mesh(Mesh& mesh) {
     MshSaver saver(m_filename, !m_in_ascii);
+    saver.set_save_default_physical_tag( m_use_default_physical_tag );
 
     size_t dim = mesh.get_dim();
     size_t num_vertices = mesh.get_num_vertices();
@@ -124,6 +126,7 @@ void MSHWriter::write_surface_mesh(Mesh& mesh) {
 
 void MSHWriter::write_volume_mesh(Mesh& mesh) {
     MshSaver saver(m_filename, !m_in_ascii);
+    saver.set_save_default_physical_tag( m_use_default_physical_tag );
 
     size_t dim = mesh.get_dim();
     size_t num_vertices = mesh.get_num_vertices();

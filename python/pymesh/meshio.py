@@ -134,6 +134,9 @@ def save_mesh_raw(filename, vertices, faces, voxels=None, **setting):
         writer.in_ascii();
     if setting.get("use_float", False):
         writer.use_float();
+    writer.use_default_physical_tag( 
+        setting.get("use_default_physical_tag", False )
+    )
     writer.write(
             vertices.ravel(order="C"),
             faces.ravel(order="C"),
@@ -184,4 +187,7 @@ def save_mesh(filename, mesh, *attributes, **setting):
         writer.use_float();
     if setting.get("anonymous", False):
         writer.set_anonymous();
+    writer.use_default_physical_tag( 
+        setting.get("use_default_physical_tag", False )
+    )
     writer.write_mesh(mesh.raw_mesh);

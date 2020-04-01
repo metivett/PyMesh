@@ -17,6 +17,7 @@ void init_MeshWriter(py::module &m) {
         .def("with_attribute", &MeshWriter::with_attribute)
         .def("in_ascii", &MeshWriter::in_ascii)
         .def("use_float", &MeshWriter::use_float)
+        .def("use_default_physical_tag", &MeshWriter::use_default_physical_tag)
         .def("write_mesh", &MeshWriter::write_mesh)
         .def("write", &MeshWriter::write)
         .def("set_output_filename", &MeshWriter::set_output_filename)

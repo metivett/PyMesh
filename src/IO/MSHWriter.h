@@ -18,6 +18,7 @@ class MSHWriter : public MeshWriter {
     public:
         virtual void with_attribute(const std::string& attr_name);
         virtual void in_ascii() { m_in_ascii=true; }
+        virtual void use_default_physical_tag( bool b = true ) { m_use_default_physical_tag = b; }
         virtual void write_mesh(Mesh& mesh);
         virtual void write(
                 const VectorF& vertices,
@@ -35,6 +36,7 @@ class MSHWriter : public MeshWriter {
         typedef std::list<std::string> AttrNames;
         AttrNames m_attr_names;
         bool m_in_ascii;
+        bool m_use_default_physical_tag;
 };
 
 }

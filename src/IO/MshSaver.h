@@ -23,6 +23,9 @@ class MshSaver {
         };
 
     public:
+        bool save_default_physical_tag() const { return m_save_default_physical_tag; }
+        void set_save_default_physical_tag(bool b) { m_save_default_physical_tag = b; }
+
         void save_mesh(const VectorF& nodes, const VectorI& elements,
                 size_t dim, ElementType type);
         void save_header();
@@ -45,6 +48,10 @@ class MshSaver {
         size_t m_num_nodes;
         size_t m_num_elements;
         size_t m_dim;
+
+        size_t m_default_physical_tag;
+        std::string m_default_physical_name;
+        bool m_save_default_physical_tag;
 
         std::ofstream fout;
 };
