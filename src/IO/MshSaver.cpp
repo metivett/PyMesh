@@ -54,6 +54,7 @@ void MshSaver::save_header() {
         fout << "2.2 1 " << sizeof(double) << std::endl;
         int one = 1;
         fout.write((char*)&one, sizeof(int));
+        fout << std::endl;
         fout << "$EndMeshFormat" << std::endl;
     }
     if (m_save_default_physical_tag) {
@@ -95,6 +96,7 @@ void MshSaver::save_nodes(const VectorF& nodes) {
                 fout.write((char*)&zero, sizeof(Float));
             }
         }
+        fout << std::endl;
     }
     fout << "$EndNodes" << std::endl;
     fout.flush();
@@ -167,6 +169,7 @@ void MshSaver::save_elements(
                     fout.write((char*)&physical_tag, sizeof(int));
                 fout.write((char*)elem.data(), sizeof(int)*nodes_per_element);
             }
+            fout << std::endl;
         }
     }
     fout << "$EndElements" << std::endl;
@@ -191,6 +194,7 @@ void MshSaver::save_scalar_field(const std::string& fieldname, const VectorF& fi
             fout.write((char*)&node_idx, sizeof(int));
             fout.write((char*)&field[i], sizeof(Float));
         }
+        fout << std::endl;
     } else {
         for (size_t i=0; i<m_num_nodes; i++) {
             int node_idx = i+1;
@@ -225,6 +229,7 @@ void MshSaver::save_vector_field(const std::string& fieldname, const VectorF& fi
                 fout.write((char*)&zero, sizeof(Float)); // Set z=0
             }
         }
+        fout << std::endl;
     } else {
         for (size_t i=0; i<m_num_nodes; i++) {
             int node_idx = i+1;
@@ -265,6 +270,7 @@ void MshSaver::save_elem_scalar_field(const std::string& fieldname, const Vector
             fout.write((char*)&elem_idx, sizeof(int));
             fout.write((char*)&field[i], sizeof(Float));
         }
+        fout << std::endl;
     } else {
         for (size_t i=0; i<m_num_elements; i++) {
             int elem_idx = i+1;
@@ -300,6 +306,7 @@ void MshSaver::save_elem_vector_field(const std::string& fieldname, const Vector
                 fout.write((char*)&zero, sizeof(Float)); // set z=0
             }
         }
+        fout << std::endl;
     } else {
         for (size_t i=0; i<m_num_elements; i++) {
             int elem_idx = i+1;
@@ -356,6 +363,7 @@ void MshSaver::save_elem_tensor_field(const std::string& fieldname, const Vector
                 fout.write((char*)tensor, sizeof(Float)*9);
             }
         }
+        fout << std::endl;
     } else {
         for (size_t i=0; i<m_num_elements; i++) {
             int elem_idx = i+1;
